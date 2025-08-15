@@ -5,6 +5,10 @@ const todoRoutes = require("./routes/tododb.js");
 const { todos } = require("./routes/todo.js");
 const db = require("./database/db.js"); // Import database connection
 const port = process.env.PORT || 3001; // Use environment variable or default to 3001
+const expressLayouts = require("express-ejs-layouts");
+
+app.use(expressLayouts);
+app.set('layout', 'layout/main-layout'); // default layout
 
 app.use(express.json());
 //atur EJS sebagai view engine
