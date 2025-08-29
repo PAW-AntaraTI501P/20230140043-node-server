@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <title>Daftar Tugas Saya</title>
+    <style>
+      .btn:hover {
+        transform: scale(1.1);
+        transition: transform 0.2s ease-in-out;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>Daftar Tugas Saya</h1>
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">
+          <i class="bi bi-plus-circle"></i> Tambah Tugas
+        </button>
+      </div>
+
+      <% if (todos && todos.length > 0) { %>
+      <ul class="list-group my-4">
+        <% todos.forEach(function(todo) { %>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          <span> ID: <%= todo.id %> - Tugas: <%= todo.task %> </span>
+
+          <div>
+            <button
+              type="button"
+              class="btn btn-warning btn-sm"
+              data-toggle="modal"
+              data-target="#editModal"
+              data-id="<%= todo.id %>"
+              data-task="<%= todo.task %>"
+            >
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            
+            <form action="/todos/delete/<%= todo.id %>" method="POST" class="d-inline">
+                 <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash"></i>
+                 </button>
+            </form>
+          </div>
+        </li>
+        <% }); %>
+      </ul>
+      <% } else { %>
+      <p class="my-4">Tidak ada tugas yang tersedia.</p>
+      <% } %>
+
+      <a href="/" class="btn btn-secondary mt-3">Go to Home</a>
+    </div>
+
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addModalLabel">Tambah Tugas Baru</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form action="/todos/add" method="POST">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="addTaskInput">Nama Tugas</label>
+                <input type="text" class="form-control" id="addTaskInput" name="task" placeholder="Contoh: Belajar EJS" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Edit Tugas</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="editForm" method="POST">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="editTaskInput">Nama Tugas</label>
+                <input type="text" class="form-control" id="editTaskInput" name="task" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      $('#editModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var task = button.data('task');
+        var modal = $(this);
+        modal.find('.modal-body #editTaskInput').val(task);
+        var form = modal.find('#editForm');
+        form.attr('action', '/todos/update/' + id);
+      });
+    </script>
+  </body>
+</html>
